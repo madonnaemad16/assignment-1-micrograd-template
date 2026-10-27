@@ -2,7 +2,7 @@ import math
 
 class Value:
     def __init__(self, data, _children=(), _op='', label=''):
-        self.data = data
+        self.data = float(data)
         self.grad = 0.0  # means no effect by default
         self._backward = lambda: None
         self._prev = set(_children)
@@ -10,8 +10,7 @@ class Value:
         self.label = label
 
     def __repr__(self):
-        # TODO: Return string representation, e.g., "Value(data=...)"
-        pass
+        return f"Value(data={self.data})"
 
     def __add__(self, other):  # self + other
         # TODO: Handle both Value and scalar inputs
@@ -59,8 +58,7 @@ class Value:
         pass
 
     def reset_grad(self):
-        # TODO: Reset self.grad to 0.0
-        pass
+        self.grad = 0.0
 
     def _get_topo(self):
         # TODO: Return a list of all nodes in topological order
@@ -71,9 +69,7 @@ class Value:
         pass
 
     def __int__(self):  # int(self)
-        # TODO: Return data as int
-        pass
+        return int(self.data)
 
     def __float__(self):  # float(self)
-        # TODO: Return data as float
-        pass
+        return float(self.data)
