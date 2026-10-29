@@ -1,6 +1,9 @@
 import math
 
 class Value:
+    """
+    Stores a single scalar value and its gradient for automatic differentiation.
+    """
     def __init__(self, data, _children=(), _op='', label=''):
         self.data = float(data)
         self.grad = 0.0  # means no effect by default
@@ -85,25 +88,47 @@ class Value:
         return out
 
     def tanh(self):  # tanh(self)
-        # TODO: Implement hyperbolic tangent activation
-        # TODO: Implement _backward for tanh
-        pass
+        t = math.tanh(self.data)
+        out = Value(t, (self,), 'tanh')
+
+        def _backward():
+            self.grad += (1.0 - t ** 2) * out.grad
+        out._backward = _backward
+
+        return out
 
     def exp(self):  # e**self
-        # TODO: Implement exponential function (math.exp)
-        # TODO: Implement _backward for exp
-        pass
+        e = math.exp(self.data)
+        out = Value(e, (self,), 'exp')
+
+        def _backward():
+            self.grad += out.data * out.grad
+        out._backward = _backward
+
+        return out
 
     def reset_grad(self):
         self.grad = 0.0
 
     def _get_topo(self):
-        # TODO: Return a list of all nodes in topological order
-        pass
+        topo = []
+        visited = set()
+
+        def build_topo(v):
+            if v not in visited:
+                visited.add(v)
+                for child in v._prev:
+                    build_topo(child)
+                topo.append(v)
+
+        build_topo(self)
+        return topo
 
     def backward(self):
-        # TODO: Retrieve topological order, set root grad to 1.0, and apply _backward in reverse
-        pass
+        topo = self._get_topo()
+        self.grad = 1.0  # seed gradient
+        for node in reversed(topo):
+            node._backward()
 
     def __int__(self):  # int(self)
         return int(self.data)
